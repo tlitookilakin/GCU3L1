@@ -30,7 +30,7 @@ class Program
 			while (!TryGetInput(Console.ReadLine(), out id))
 				Console.WriteLine("Sorry, I didn't get that. Could you please try again?");
 
-			if (id == -1)
+			if (id < 0)
 				ListAllStudents();
 			else
 				ListStudent(id);
@@ -54,12 +54,14 @@ class Program
 		string format = $"{{0,-3}}    {{1, -{columns[0]}}}    {{2, -{columns[1]}}}    {{3, -{columns[2]}}}";
 		// becomes {0, -3}    {1, -#}    {2, -#}    {3, -#}
 
+		// print header text with divider and spacing
 		string header = string.Format(format, "ID#", "Name", "Hometown", "Favorite Food");
 		Console.WriteLine();
 		Console.WriteLine(header);
 		Console.WriteLine(new string('\x2500', header.Length));
 		Console.WriteLine();
 
+		// print entries
 		for (int i = 0; i < names.Length; i++)
 			Console.WriteLine(string.Format(format, i, names[i], hometowns[i], favoriteFoods[i]));
 
@@ -77,7 +79,8 @@ class Program
 
 			if (line != null)
 			{
-				line = line.Trim();
+				line = line.Trim(); // important
+
 				if ("favorite food".Contains(line, StringComparison.OrdinalIgnoreCase))
 				{
 					Console.WriteLine($"{names[id]}'s favorite food is {favoriteFoods[id]}");
@@ -101,15 +104,20 @@ class Program
 	static bool TryGetInput(string? input, out int studentId)
 	{
 		studentId = -1;
+
+		// invalid input
 		if (input is null)
 			return false;
 
+		// show all students
 		if (input.Equals("students", StringComparison.OrdinalIgnoreCase))
 			return true;
 
+		// check for id #
 		if (int.TryParse(input, out studentId))
 			return studentId >= 0 && studentId < names.Length;
 
+		// find a partial or complete match by name
 		for (studentId = 0; studentId < names.Length; studentId++)
 			if (
 				names[studentId].Equals(input, StringComparison.OrdinalIgnoreCase) || 
@@ -117,6 +125,7 @@ class Program
 			)
 				return true;
 
+		// no results
 		return false;
 	}
 
